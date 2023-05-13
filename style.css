@@ -5,3 +5,19 @@
 .player_name{
     font-size: large;
 }
+
+.vs{
+    color: rebeccapurple;
+}
+
+.nc{
+    color: blue;
+}
+
+.tr{
+    color: red;
+}
+
+.nso{
+    color: grey;
+}
