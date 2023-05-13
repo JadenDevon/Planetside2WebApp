@@ -7,8 +7,26 @@ const APIURL = "https://census.daybreakgames.com/get/ps2:v2"
 function parsePlayerInfo(json){
     const playerName = document.getElementById("playerName")
     const playerBR = document.getElementById("playerBR")
+    const playerFaction = document.getElementById("playerFaction")
     playerName.innerText = json.name.first
-    playerBR.innerText = json.battle_rank.value
+    playerBR.innerText = `BR ${json.battle_rank.value}`
+    parseFaction.innerText = parseFaction(json.faction_id)
+}
+
+function parseFaction(id){
+    switch(id){
+        case '1': 
+            return "Vanu Sovereignty"
+        case '2': 
+            return "New Conglomerate"
+        case '3': 
+            return "Terran Republic"
+        case '4':
+            return "Nanite Systems Mercenary"
+        default: 
+            return "Faction Not Found"
+    }
+    
 }
 
 const fetchPlayer = async (e)=> {
