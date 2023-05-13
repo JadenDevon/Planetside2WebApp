@@ -10,19 +10,19 @@ function parsePlayerInfo(json){
     const playerFaction = document.getElementById("playerFaction")
     playerName.innerText = json.name.first
     playerBR.innerText = `BR ${json.battle_rank.value}`
-    parseFaction.innerText = parseFaction(json.faction_id)
+    playerFaction.innerText = parseFaction(json.faction_id)
 }
 
 function parseFaction(id){
     switch(id){
-        case '1': 
+        case "1": 
             return "Vanu Sovereignty"
-        case '2': 
+        case "2": 
             return "New Conglomerate"
-        case '3': 
+        case "3": 
             return "Terran Republic"
-        case '4':
-            return "Nanite Systems Mercenary"
+        case "4":
+            return "Nanite Systems Operative"
         default: 
             return "Faction Not Found"
     }
