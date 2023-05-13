@@ -1,3 +1,7 @@
 .hidden{
     display: none;
 }
+
+.player_name{
+    font-size: large;
+}

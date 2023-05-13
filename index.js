@@ -1,16 +1,32 @@
 const psForm = document.getElementById("playerSearch")
-const sidebar = document.getElementById("sidebar")
-const cards = document.getElementById("cards")
-const sortby = document.getElementById("sortby")
-const APIURL = "https://census.daybreakgames.com/get/ps2:v2"
+const playerInfoSection = document.getElementById("playerInfo")
+const APIURL = "https://census.daybreakgames.com/s:DevonsReach/get/ps2:v2"
 
 function parsePlayerInfo(json){
-    const playerName = document.getElementById("playerName")
-    const playerBR = document.getElementById("playerBR")
-    const playerFaction = document.getElementById("playerFaction")
-    playerName.innerText = json.name.first
-    playerBR.innerText = `BR ${json.battle_rank.value}`
-    playerFaction.innerText = parseFaction(json.faction_id)
+    const children = [...playerInfoSection.children]
+    children.forEach(child => {
+        console.log(child)
+        playerInfoSection.removeChild(child)
+    });
+    
+    const playerName = newElement("p", json.name.first, "player_name")
+    const playerBR = newElement("span", `BR ${json.battle_rank.value}`)
+    const playerFaction = newElement("h4", parseFaction(json.faction_id))
+    playerInfoSection.append(playerName)
+    playerName.append(playerBR)
+    playerInfoSection.append(playerFaction)
+    // playerName.innerText = json.name.first
+    // playerBR.innerText = `BR ${json.battle_rank.value}`
+    // playerFaction.innerText = parseFaction(json.faction_id)
+}
+
+function newElement(tagID, text="", classID=null){
+    const ele = document.createElement(tagID)
+    ele.innerText = text
+    if (classID !== null){
+        ele.classList.add(classID)
+    }
+    return ele
 }
 
 function parseFaction(id){
