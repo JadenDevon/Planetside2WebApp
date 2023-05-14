@@ -101,8 +101,6 @@ function autoComplete(players) {
         ele.classList.add("autocomplete-item")
         document.getElementById("autocomplete").append(ele)
         ele.addEventListener("click", (e) => {
-            console.log(e)
-            console.log(player.name.first)
             fetchPlayer(e.target.innerText.substring(0, e.target.innerText.search(",")))
             removeAutoCompleteItems()
         })
