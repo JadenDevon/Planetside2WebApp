@@ -85,12 +85,13 @@ const fetchPlayer = async (playerName) => {
 
 const autoCompleteFetch = async (e) => {
     e.preventDefault()
-
-    await fetch(APIURL + `/character/?name.first_lower=^${ps_input.value.toLowerCase()}&c:limit=10&c:show=name.first,battle_rank,prestige_level,faction_id&c:sort=name.first_lower`)
-        .then(r => r.json())
-        .then((data) => {
-            autoComplete(data.character_list)
-        })
+    if (ps_input.value.length > 2) {
+        await fetch(APIURL + `/character/?name.first_lower=^${ps_input.value.toLowerCase()}&c:limit=10&c:show=name.first,battle_rank,prestige_level,faction_id&c:sort=name.first_lower`)
+            .then(r => r.json())
+            .then((data) => {
+                autoComplete(data.character_list)
+            })
+    }
 }
 
 function autoComplete(players) {
