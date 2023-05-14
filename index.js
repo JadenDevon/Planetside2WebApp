@@ -14,10 +14,9 @@ function parsePlayerInfo(playerData) {
     playerInfoSection.append(playerFaction)
 }
 
-function clearSection(section){
+function clearSection(section) {
     const children = Array.from(section.children)
     children.forEach(child => {
-        console.log(child)
         section.removeChild(child)
     });
 }
@@ -31,7 +30,7 @@ function newElement(tagID, text = "", classID) {
     return ele
 }
 
-function parseWorld(id){
+function parseWorld(id) {
     switch (id) {
         case "1":
             return "Vanu Sovereignty"
@@ -61,7 +60,7 @@ function parseFaction(id) {
     }
 }
 
-function setFactionColor(id){
+function setFactionColor(id) {
     switch (id) {
         case "1":
             return "vs"
@@ -77,10 +76,11 @@ function setFactionColor(id){
 }
 
 const fetchPlayer = async (playerName) => {
-    const response = await fetch(APIURL + `/character/?name.first_lower=${playerName}&c:resolve=outfit,stat,world`)
+    await fetch(APIURL + `/character/?name.first_lower=${playerName.toLowerCase()}&c:resolve=outfit,stat,world`)
         .then(r => r.json())
-    console.log(response.character_list[0])
-    parsePlayerInfo(response.character_list[0])
+        .then(data => {
+            parsePlayerInfo(data.character_list[0])
+        })
 }
 
 const autoCompleteFetch = async (e) => {
@@ -89,22 +89,26 @@ const autoCompleteFetch = async (e) => {
     await fetch(APIURL + `/character/?name.first_lower=^${ps_input.value.toLowerCase()}&c:limit=10&c:show=name.first,battle_rank,prestige_level,faction_id&c:sort=name.first_lower`)
         .then(r => r.json())
         .then((data) => {
-            // console.log(data)
             autoComplete(data.character_list)
         })
 }
 
-function autoComplete(players){
+function autoComplete(players) {
     removeAutoCompleteItems()
     players.forEach(player => {
-        ele = newElement("div", `${player.name.first}, BR ${player.battle_rank.value}(${player.prestige_level})`, setFactionColor(player.faction_id))
+        const ele = newElement("div", `${player.name.first}, BR ${player.battle_rank.value}(${player.prestige_level})`, setFactionColor(player.faction_id))
         ele.classList.add("autocomplete-item")
         document.getElementById("autocomplete").append(ele)
-        ele.addEventListener("click", fetchPlayer(player.name.first))
+        ele.addEventListener("click", (e) => {
+            console.log(e)
+            console.log(player.name.first)
+            fetchPlayer(e.target.innerText.substring(0, e.target.innerText.search(",")))
+            removeAutoCompleteItems()
+        })
     })
 }
 
-function removeAutoCompleteItems(){
+function removeAutoCompleteItems() {
     items = [...document.getElementsByClassName("autocomplete-item")]
     items.forEach(element => {
         document.getElementById("autocomplete").removeChild(element)
@@ -115,4 +119,5 @@ ps_input.addEventListener("keyup", autoCompleteFetch)
 psForm.addEventListener("submit", (e) => {
     e.preventDefault()
     fetchPlayer(ps_input.value)
+    removeAutoCompleteItems()
 })
