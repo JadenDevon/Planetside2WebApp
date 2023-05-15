@@ -65,7 +65,7 @@ function newElement(tagID, text = "", classID) {
 }
 
 function parsePlayerInfo(playerData) {
-    removeChildren(document.getElementById("autocomplete_list"))
+    removeChildren(autocompleteList)
     ps_input.value = ""
 
     const playerInfo = document.getElementById("playerInfo")
@@ -88,11 +88,11 @@ const fetchPlayer = async (playerName) => {
 }
 
 function autoComplete(players) {
-    removeChildren(document.getElementById("autocomplete_list"))
+    removeChildren(autocompleteList)
     if (ps_input.value.length > 2) {
         players.forEach(player => {
             const ele = newElement("div", `${player.name.first}, BR ${player.battle_rank.value}(${player.prestige_level})`, setFactionColor(player.faction_id))
-            document.getElementById("autocomplete_list").appendChild(ele)
+            autocompleteList.append(ele)
             ele.addEventListener("click", (e) => {
                 parsePlayerInfo(player)
             })
@@ -115,5 +115,5 @@ ps_input.addEventListener("keyup", autoCompleteFetch)
 psForm.addEventListener("submit", (e) => {
     e.preventDefault()
     fetchPlayer(ps_input.value)
-    removeChildren(document.getElementById("autocomplete_list"))
+    removeChildren(autocompleteList)
 })
