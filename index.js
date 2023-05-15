@@ -51,7 +51,7 @@ function setFactionColor(id) {
 function removeChildren(section) {
     const children = Array.from(section.children)
     children.forEach(child => {
-        document.getElementById("autocomplete_list").removeChild(child)
+        section.removeChild(child)
     });
 }
 
