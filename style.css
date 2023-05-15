@@ -22,6 +22,14 @@
     color: grey;
 }
 
+h1 {
+    color: darkgray;
+}
+
+.player-info {
+    color: darkgray;
+}
+
 * { box-sizing: border-box; }
 body {
   font: 16px Arial;

@@ -70,8 +70,8 @@ function parsePlayerInfo(playerData) {
 
     const playerInfo = document.getElementById("playerInfo")
     removeChildren(playerInfo)
-    const playerName = newElement("div", playerData.name.first, "player_name")
-    const playerBR = newElement("div", ` BR ${playerData.battle_rank.value} (ASP ${playerData.prestige_level})`)
+    const playerName = newElement("div", playerData.name.first, "player-info")
+    const playerBR = newElement("div", ` BR ${playerData.battle_rank.value} (ASP ${playerData.prestige_level})`, "player-info")
     const playerFaction = newElement("div", parseFaction(playerData.faction_id), setFactionColor(playerData.faction_id))
     playerInfo.append(playerName)
     playerInfo.append(playerBR)
