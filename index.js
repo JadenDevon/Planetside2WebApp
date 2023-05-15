@@ -48,8 +48,8 @@ function setFactionColor(id) {
     }
 }
 
-function clearAutocompleteList() {
-    const children = Array.from(document.getElementById("autocomplete_list").children)
+function removeChildren(section) {
+    const children = Array.from(section.children)
     children.forEach(child => {
         document.getElementById("autocomplete_list").removeChild(child)
     });
@@ -65,10 +65,11 @@ function newElement(tagID, text = "", classID) {
 }
 
 function parsePlayerInfo(playerData) {
-    clearAutocompleteList()
+    removeChildren(document.getElementById("autocomplete_list"))
     ps_input.value = ""
 
     const playerInfo = document.getElementById("playerInfo")
+    removeChildren(playerInfo)
     const playerName = newElement("div", playerData.name.first, "player_name")
     const playerBR = newElement("div", ` BR ${playerData.battle_rank.value} (ASP ${playerData.prestige_level})`)
     const playerFaction = newElement("div", parseFaction(playerData.faction_id), setFactionColor(playerData.faction_id))
@@ -87,14 +88,16 @@ const fetchPlayer = async (playerName) => {
 }
 
 function autoComplete(players) {
-    clearAutocompleteList()
-    players.forEach(player => {
-        const ele = newElement("div", `${player.name.first}, BR ${player.battle_rank.value}(${player.prestige_level})`, setFactionColor(player.faction_id))
-        document.getElementById("autocomplete_list").appendChild(ele)
-        ele.addEventListener("click", (e) => {
-            parsePlayerInfo(player)
+    removeChildren(document.getElementById("autocomplete_list"))
+    if (ps_input.value.length > 2) {
+        players.forEach(player => {
+            const ele = newElement("div", `${player.name.first}, BR ${player.battle_rank.value}(${player.prestige_level})`, setFactionColor(player.faction_id))
+            document.getElementById("autocomplete_list").appendChild(ele)
+            ele.addEventListener("click", (e) => {
+                parsePlayerInfo(player)
+            })
         })
-    })
+    }
 }
 
 const autoCompleteFetch = async (e) => {
@@ -112,5 +115,5 @@ ps_input.addEventListener("keyup", autoCompleteFetch)
 psForm.addEventListener("submit", (e) => {
     e.preventDefault()
     fetchPlayer(ps_input.value)
-    clearAutocompleteList()
+    removeChildren(document.getElementById("autocomplete_list"))
 })
