@@ -1,34 +1,7 @@
 const psForm = document.getElementById("playerSearch")
-const playerInfoSection = document.getElementById("playerInfo")
+const autocompleteList = document.getElementById("autocomplete_list")
 const ps_input = document.getElementById("ps_input")
 const APIURL = "https://census.daybreakgames.com/s:DevonsReach/get/ps2:v2"
-
-function parsePlayerInfo(playerData) {
-    clearSection(playerInfoSection)
-
-    const playerName = newElement("p", playerData.name.first, "player_name")
-    const playerBR = newElement("p", ` BR ${playerData.battle_rank.value} (ASP ${playerData.prestige_level})`)
-    const playerFaction = newElement("h4", parseFaction(playerData.faction_id), setFactionColor(playerData.faction_id))
-    playerInfoSection.append(playerName)
-    playerInfoSection.append(playerBR)
-    playerInfoSection.append(playerFaction)
-}
-
-function clearSection(section) {
-    const children = Array.from(section.children)
-    children.forEach(child => {
-        section.removeChild(child)
-    });
-}
-
-function newElement(tagID, text = "", classID) {
-    const ele = document.createElement(tagID)
-    ele.innerText = text
-    if (classID !== undefined) {
-        ele.classList.add(classID)
-    }
-    return ele
-}
 
 function parseWorld(id) {
     switch (id) {
@@ -75,18 +48,59 @@ function setFactionColor(id) {
     }
 }
 
+function clearAutocompleteList() {
+    const children = Array.from(document.getElementById("autocomplete_list").children)
+    children.forEach(child => {
+        document.getElementById("autocomplete_list").removeChild(child)
+    });
+}
+
+function newElement(tagID, text = "", classID) {
+    const ele = document.createElement(tagID)
+    ele.innerText = text
+    if (classID !== undefined) {
+        ele.classList.add(classID)
+    }
+    return ele
+}
+
+function parsePlayerInfo(playerData) {
+    clearAutocompleteList()
+    ps_input.value = ""
+
+    const playerInfo = document.getElementById("playerInfo")
+    const playerName = newElement("div", playerData.name.first, "player_name")
+    const playerBR = newElement("div", ` BR ${playerData.battle_rank.value} (ASP ${playerData.prestige_level})`)
+    const playerFaction = newElement("div", parseFaction(playerData.faction_id), setFactionColor(playerData.faction_id))
+    playerInfo.append(playerName)
+    playerInfo.append(playerBR)
+    playerInfo.append(playerFaction)
+}
+
 const fetchPlayer = async (playerName) => {
     await fetch(APIURL + `/character/?name.first_lower=${playerName.toLowerCase()}&c:resolve=outfit,stat,world`)
         .then(r => r.json())
         .then(data => {
             parsePlayerInfo(data.character_list[0])
+            ps_input.value = ""
         })
+}
+
+function autoComplete(players) {
+    clearAutocompleteList()
+    players.forEach(player => {
+        const ele = newElement("div", `${player.name.first}, BR ${player.battle_rank.value}(${player.prestige_level})`, setFactionColor(player.faction_id))
+        document.getElementById("autocomplete_list").appendChild(ele)
+        ele.addEventListener("click", (e) => {
+            parsePlayerInfo(player)
+        })
+    })
 }
 
 const autoCompleteFetch = async (e) => {
     e.preventDefault()
     if (ps_input.value.length > 2) {
-        await fetch(APIURL + `/character/?name.first_lower=^${ps_input.value.toLowerCase()}&c:limit=10&c:show=name.first,battle_rank,prestige_level,faction_id&c:sort=name.first_lower`)
+        await fetch(APIURL + `/character/?name.first_lower=^${ps_input.value.toLowerCase()}&c:limit=10&c:sort=name.first_lower`)
             .then(r => r.json())
             .then((data) => {
                 autoComplete(data.character_list)
@@ -94,29 +108,9 @@ const autoCompleteFetch = async (e) => {
     }
 }
 
-function autoComplete(players) {
-    removeAutoCompleteItems()
-    players.forEach(player => {
-        const ele = newElement("div", `${player.name.first}, BR ${player.battle_rank.value}(${player.prestige_level})`, setFactionColor(player.faction_id))
-        ele.classList.add("autocomplete-item")
-        document.getElementById("autocomplete").append(ele)
-        ele.addEventListener("click", (e) => {
-            fetchPlayer(e.target.innerText.substring(0, e.target.innerText.search(",")))
-            removeAutoCompleteItems()
-        })
-    })
-}
-
-function removeAutoCompleteItems() {
-    items = [...document.getElementsByClassName("autocomplete-item")]
-    items.forEach(element => {
-        document.getElementById("autocomplete").removeChild(element)
-    });
-}
-
 ps_input.addEventListener("keyup", autoCompleteFetch)
 psForm.addEventListener("submit", (e) => {
     e.preventDefault()
     fetchPlayer(ps_input.value)
-    removeAutoCompleteItems()
+    clearAutocompleteList()
 })
