@@ -25,6 +25,9 @@
 * { box-sizing: border-box; }
 body {
   font: 16px Arial;
+  background-image: url("./img/Araxium Lightning.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 .autocomplete {
   /*the container must be positioned relative:*/
